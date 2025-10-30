@@ -1,80 +1,89 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 100
+class Stack {
+    char arr[100];
+    int top;
 
-char myStack[MAX];
-int top = -1;
+public:
+    Stack() { top = -1; }
 
-// Push operation
-void push(char c) {
-    if (top == MAX - 1) {
-        cout << "Stack Overflow!" << endl;
-    } else {
-        myStack[++top] = c;
+    void push(char c) {
+        if (top == 99) return;
+        arr[++top] = c;
     }
-}
-char pop() {
-    if (top == -1) {
-        return '\0';
-    } else {
-        return myStack[top--];
+
+    char pop() {
+        if (top == -1) return '\0';
+        return arr[top--];
     }
-}
-char peek() {
-    if (top == -1) return '\0';
-    return myStack[top];
-}
-bool isOperator(char c) {
-    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
-}
+
+    char peek() {
+        if (top == -1) return '\0';
+        return arr[top];
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+};
+
 int precedence(char op) {
     if (op == '^') return 3;
     if (op == '*' || op == '/') return 2;
     if (op == '+' || op == '-') return 1;
     return 0;
 }
-void infixToPostfix(char infix[], char postfix[]) {
-    int i = 0, k = 0;
-    char ch;
 
-    while ((ch = infix[i++]) != '\0') {
-        if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
-            postfix[k++] = ch;
+bool isOperator(char c) {
+    return (c == '+' || c == '-' || c == '*' || c == '/' || c == '^');
+}
+// this function works on the basics of that the operators with higher precedence 
+// are placed before the operators with lower precedence in the postfix expression.
+void infixToPostfix(char infix[]) {
+    Stack st;
+    char postfix[100];
+    int j = 0;
+
+    for (int i = 0; infix[i] != '\0'; i++) {
+        char ch = infix[i];
+
+        if ((ch >= 'A' && ch <= 'Z') || (ch >= 'a' && ch <= 'z') || (ch >= '0' && ch <= '9')) {
+            postfix[j++] = ch;
         }
+
         else if (ch == '(') {
-            push(ch);
+            st.push(ch);
         }
+
         else if (ch == ')') {
-            while (top != -1 && peek() != '(') {
-                postfix[k++] = pop();
+            while (!st.isEmpty() && st.peek() != '(') {
+                postfix[j++] = st.pop();
             }
-            pop();
+            st.pop(); 
         }
+
         else if (isOperator(ch)) {
-            while (top != -1 && precedence(peek()) >= precedence(ch)) {
-                postfix[k++] = pop();
+            while (!st.isEmpty() && precedence(st.peek()) >= precedence(ch)) {
+                postfix[j++] = st.pop();
             }
-            push(ch);
+            st.push(ch);
         }
-    }
-    while (top != -1) {
-        postfix[k++] = pop();
     }
 
-    postfix[k] = '\0'; 
+    while (!st.isEmpty()) {
+        postfix[j++] = st.pop();
+    }
+
+    postfix[j] = '\0';
+    cout << "Postfix expression: " << postfix << endl;
 }
 
 int main() {
-    char infix[MAX], postfix[MAX];
-
+    char infix[100];
     cout << "Enter infix expression: ";
     cin >> infix;
 
-    infixToPostfix(infix, postfix);
-
-    cout << "Postfix expression: " << postfix << endl;
-
+    infixToPostfix(infix);
     return 0;
 }
-

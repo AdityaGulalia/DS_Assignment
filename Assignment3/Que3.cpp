@@ -1,64 +1,68 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 100
+class Stack {
+    char arr[100];
+    int top;
 
-char charStack[MAX];
-int top = -1;
+public:
+    Stack() { top = -1; }
 
-// Push operation
-void push(char c) {
-    if (top == MAX - 1) {
-        cout << "Stack Overflow!" << endl;
-    } else {
-        charStack[++top] = c;
+    void push(char c) {
+        if (top == 99) {
+            cout << "Stack Overflow";
+            return;
+        }
+        arr[++top] = c;
     }
-}
 
-// Pop operation
-char pop() {
-    if (top == -1) {
-        return '\0'; 
-    } else {
-        return charStack[top--];
+    char pop() {
+        if (top == -1) {
+            return '\0'; 
+        }
+        return arr[top--];
     }
-}
-bool isMatchingPair(char opening, char closing) {
-    return ((opening == '(' && closing == ')') ||
-            (opening == '{' && closing == '}') ||
-            (opening == '[' && closing == ']'));
-}
+
+    bool isEmpty() {
+        return top == -1;
+    }
+
+};
+// if the previous bracket matcher the next one which the the opposite if the previous then it has balanced parentheses
 bool isBalanced(char exp[]) {
+    Stack st;
     for (int i = 0; exp[i] != '\0'; i++) {
         char ch = exp[i];
+
         if (ch == '(' || ch == '{' || ch == '[') {
-            push(ch);
+            st.push(ch);
         } 
         else if (ch == ')' || ch == '}' || ch == ']') {
-            if (top == -1) { 
-                return false;
+            if (st.isEmpty()) {
+                return false;  
             }
-            char popped = pop();
-            if (!isMatchingPair(popped, ch)) {
+            char topChar = st.pop();
+
+            if ((ch == ')' && topChar != '(') ||
+                (ch == '}' && topChar != '{') ||
+                (ch == ']' && topChar != '[')) {
                 return false;
             }
         }
     }
-    return (top == -1);
+
+    return st.isEmpty(); 
 }
 
 int main() {
-    char expression[MAX];
-
+    char expression[100];
     cout << "Enter an expression: ";
-    cin >> expression;
+    cin >> expression; 
 
-    if (isBalanced(expression)) {
-        cout << "Expression has Balanced Parentheses" << endl;
-    } else {
-        cout << "Expression has Unbalanced Parentheses" << endl;
-    }
+    if (isBalanced(expression))
+        cout << "Balanced expression " << endl;
+    else
+        cout << "Unbalanced expression " << endl;
 
     return 0;
 }
-

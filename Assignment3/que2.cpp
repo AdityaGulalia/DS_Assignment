@@ -1,56 +1,55 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 100
+class Stack {
+    char arr[100];
+    int top;
 
-char charStack[MAX];
-int top = -1;
-bool isEmpty() {
-    return (top == -1);
-}
-bool isFull() {
-    return (top == MAX - 1);
-}
-void push(char c) {
-    if (isFull()) {
-        cout << "Stack Overflow! Cannot push " << c << endl;
-    } else {
-        charStack[++top] = c;
-    }
-}
-char pop() {
-    if (isEmpty()) {
-        cout << "Stack Underflow!" << endl;
-        return '\0';
-    } else {
-        return charStack[top--];
-    }
-}
+public:
+    Stack() { top = -1; }
 
-int findLength(char str[]) {
-    int length = 0;
-    while (str[length] != '\0') {
-        length++;
+    void push(char c) {
+        if (top == 99) {
+            cout << "Stack Overflow\n";
+            return;
+        }
+        arr[++top] = c;
     }
-    return length;
-}
+
+    char pop() {
+        if (top == -1) {
+            cout << "Stack Underflow\n";
+            return '\0';
+        }
+        return arr[top--];
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+};
 
 int main() {
-    char str[MAX];
-
+    char s[100];
     cout << "Enter a string: ";
-    cin >> str;  
+    cin >> s;  
 
-    int len = findLength(str);
+    Stack st;
+
+    int len = 0;
+    while (s[len] != '\0') {
+        len++;
+    }
+
     for (int i = 0; i < len; i++) {
-        push(str[i]);
+        st.push(s[i]);
     }
-    cout << "Reversed string: ";
-    while (!isEmpty()) {
-        cout << pop();
-    }
-    cout << endl;
 
+    cout << "Reversed string: ";
+    while (!st.isEmpty()) {
+        cout << st.pop();
+    }
+
+    cout << endl;
     return 0;
 }
-

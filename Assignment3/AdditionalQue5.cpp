@@ -1,60 +1,71 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 100
+class Stack {
+    int arr[100];
+    int top;
 
-int stackArr[MAX];
-int top = -1;
+public:
+    Stack() { top = -1; }
 
-void push(int x) {
-    stackArr[++top] = x;
-}
-
-int pop() {
-    return stackArr[top--];
-}
-
-bool isEmpty() {
-    return top == -1;
-}
-
-int peek() {
-    return stackArr[top];
-}
-
-int main() {
-    int n;
-    cout << "Enter size of array: ";
-    cin >> n;
-
-    int A[n];
-    cout << "Enter elements of array A: ";
-    for (int i = 0; i < n; i++) {
-        cin >> A[i];
+    void push(int val) {
+        if (top == 99) {
+            cout << "Stack Overflow";
+            return;
+        }
+        arr[++top] = val;
     }
 
+    void pop() {
+        if (top == -1) {
+            cout << "Stack Underflow";
+            return;
+        }
+        top--;
+    }
+
+    int peek() {
+        if (top == -1)
+            return -1;
+        return arr[top];
+    }
+
+    bool isEmpty() {
+        return top == -1;
+    }
+};
+
+bool canBeSorted(int A[], int n) {
+    Stack st;
     int expected = 1; 
-    top = -1; 
+    int i = 0;
 
-    for (int i = 0; i < n; i++) {
-        push(A[i]);
+    while (i < n) {
+        st.push(A[i]);
 
-        while (!isEmpty() && peek() == expected) {
-            pop();
+        while (!st.isEmpty() && st.peek() == expected) {
+            st.pop();
             expected++;
         }
+        i++;
     }
 
-    while (!isEmpty() && peek() == expected) {
-        pop();
+    while (!st.isEmpty() && st.peek() == expected) {
+        st.pop();
         expected++;
     }
 
-    if (expected == n + 1)
-        cout << "YES, it is possible to sort into B" << endl;
+    return (st.isEmpty());
+}
+
+int main() {
+    int A[] = {60,50,55};
+    int n = 3;
+
+    if (canBeSorted(A, n))
+        cout << "YES, array B can be sorted ascendingly.";
     else
-        cout << "NO, it is not possible" << endl;
+        cout << "NO, array B cannot be sorted.";
 
     return 0;
 }
-

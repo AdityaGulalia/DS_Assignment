@@ -1,46 +1,69 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 100
+class Stack {
+    int arr[100];
+    int top;
+public:
+    Stack() { top = -1; }
 
-int charstack[MAX];
-int top = -1;
+    void push(int value) {
+        if (top == 99) {
+            cout << "Stack Overflow\n";
+            return;
+        }
+        arr[++top] = value;
+    }
 
-void push(int value) {
-    charstack[++top] = value;
-}
+    int pop() {
+        if (top == -1) {
+            cout << "Stack Underflow\n";
+            return 0;
+        }
+        return arr[top--];
+    }
 
-int pop() {
-    return charstack[top--];
-}
+    bool isEmpty() {
+        return top == -1;
+    }
+};
+// If operand push to stack.
+// If operator pop top 2 operands, perform the operation, and push the result back.
+int evaluatePostfix(string exp) {
+    Stack st;
 
-int evaluatePostfix(char postfix[]) {
-    int i = 0;
-    char ch;
+    for (int i = 0; i < exp.length(); i++) {
+        char ch = exp[i];
 
-    while ((ch = postfix[i++]) != '\0') {
         if (ch >= '0' && ch <= '9') {
-            push(ch - '0');  
-        } else {
-            int b = pop();
-            int a = pop();
-            switch (ch) {
-                case '+': push(a + b); break;
-                case '-': push(a - b); break;
-                case '*': push(a * b); break;
-                case '/': push(a / b); break;
-            }
+            st.push(ch - '0');  
+        }
+
+        else {
+            int val2 = st.pop();
+            int val1 = st.pop();
+            int result = 0;
+
+            if (ch == '+')
+                result = val1 + val2;
+            else if (ch == '-')
+                result = val1 - val2;
+            else if (ch == '*')
+                result = val1 * val2;
+            else if (ch == '/')
+                result = val1 / val2;
+
+            st.push(result);
         }
     }
-    return pop();
+
+    return st.pop();
 }
 
 int main() {
-    char postfix[MAX];
-    cout << "Enter postfix expression: ";
-    cin >> postfix;
-
+    string postfix;
+    cout << "Enter Postfix expression: ";
+    cin >> postfix;   
     cout << "Result = " << evaluatePostfix(postfix) << endl;
     return 0;
 }
-
