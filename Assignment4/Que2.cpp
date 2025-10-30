@@ -1,62 +1,121 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 5
-int cq[MAX];
-int front = -1, rear = -1;
+class CircularQueue {
+    int arr[100];       
+    int front, rear;
+    int count;
+    int capacity;
 
-void enqueue(int x) {
-    if ((front == 0 && rear == MAX - 1) || (rear + 1 == front)) {
-        cout << "Queue full" << endl;
-    } else {
-        if (front == -1) front = rear = 0;
-        else if (rear == MAX - 1) rear = 0;
-        else rear++;
-        cq[rear] = x;
+public:
+    CircularQueue(int cap = 100) { 
+        capacity = cap;
+        front = 0;
+        rear = -1;
+        count = 0;
     }
-}
 
-void dequeue() {
-    if (front == -1) cout << "Queue empty" << endl;
-    else {
-        cout << "Removed: " << cq[front] << endl;
-        if (front == rear) front = rear = -1;
-        else if (front == MAX - 1) front = 0;
-        else front++;
+    bool isEmpty() {
+        return count == 0;
     }
-}
 
-void display() {
-    if (front == -1) cout << "Queue empty" << endl;
-    else {
-        cout << "Queue: ";
+    bool isFull() {
+        return count == capacity;
+    }
+
+    void enqueue(int x) {
+        if (isFull()) {
+            return;
+        }
+        rear = (rear + 1) % capacity;
+        arr[rear] = x;
+        count++;
+    }
+
+    void dequeue() {
+        if (isEmpty()) {
+            return;
+        }
+        front = (front + 1) % capacity;
+        count--;
+    }
+
+    void peek() {
+        if (isEmpty()) {
+            return;
+        }
+        cout << "Front element: " << arr[front] << endl;
+    }
+
+    void display() {
+        if (isEmpty()) {
+            return;
+        }
+        cout << "Queue elements: ";
         int i = front;
-        while (true) {
-            cout << cq[i] << " ";
-            if (i == rear) break;
-            i = (i + 1) % MAX;
+        for (int c = 0; c < count; c++) {
+            cout << arr[i] << " ";
+            i = (i + 1) % capacity;
         }
         cout << endl;
     }
-}
-
-void peek() {
-    if (front == -1) cout << "Queue empty" << endl;
-    else cout << "Front: " << cq[front] << endl;
-}
+};
 
 int main() {
-    int ch, val;
-    do {
-        cout << "1.Enqueue 2.Dequeue 3.Peek 4.Display 5.Exit: ";
-        cin >> ch;
-        switch (ch) {
-            case 1: cin >> val; enqueue(val); break;
-            case 2: dequeue(); break;
-            case 3: peek(); break;
-            case 4: display(); break;
+    CircularQueue q(5);
+    int choice, val;
+
+    while (true) {
+        cout << "QUEUE MENU"<<endl;
+        cout << "1. Enqueue"<<endl;
+        cout << "2. Dequeue"<<endl;
+        cout << "3. Peek"<<endl;
+        cout << "4. Display"<<endl;
+        cout << "5. Check if Empty"<<endl;
+        cout << "6. Exit"<<endl;
+        cout << "Enter your choice: "<<endl;
+        cin >> choice;
+        if (cin.fail()) { 
+            cin.clear();  
+            cin.ignore(1000, '\n');
+            cout << "Invalid input! Please enter a number"<<endl;
+            continue;
+
+        switch (choice) {
+            case 1:
+                cout << "Enter value to enqueue: ";
+                cin >> val;
+                q.enqueue(val);
+                break;
+
+            case 2:
+                q.dequeue();
+                break;
+
+            case 3:
+                q.peek();
+                break;
+
+            case 4:
+                q.display();
+                break;
+
+            case 5:
+                if (q.isEmpty())
+                    cout << "Queue is empty";
+                else
+                    cout << "Queue is not empty";
+                break;
+
+            case 6:
+                cout << "Exiting program";
+                return 0;
+
+            default:
+                cout << "Invalid choice! Try again";
         }
-    } while (ch != 5);
+    }
+
     return 0;
 }
-
+}

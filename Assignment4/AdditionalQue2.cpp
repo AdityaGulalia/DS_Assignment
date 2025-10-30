@@ -1,53 +1,68 @@
 #include <iostream>
-#include <queue>
 using namespace std;
 
-int minIndex(queue<int> &q, int sortIndex) {
-    int min_index = -1;
-    int min_val = INT_MAX;
-    int n = q.size();
+struct Node {
+    int data;
+    Node* next;
+    Node(int val) {
+        data = val;
+        next = NULL;
+    }
+};
 
-    for (int i = 0; i < n; i++) {
-        int curr = q.front();
-        q.pop();
+class Queue {
+    Node* front;
+    Node* rear;
+    int count; 
 
-        if (curr <= min_val && i <= sortIndex) {
-            min_index = i;
-            min_val = curr;
+public:
+    Queue() {
+        front = rear = NULL;
+        count = 0;
+    }
+
+    bool isEmpty() {
+        return front == NULL;
+    }
+
+    void enqueue(int val) {
+        Node* newNode = new Node(val);
+        if (rear == NULL) {
+            front = rear = newNode;
+        } else {
+            rear->next = newNode;
+            rear = newNode;
         }
-        q.push(curr);
+        count++;
     }
-    return min_index;
-}
-void insertMinToRear(queue<int> &q, int min_index) {
-    int n = q.size();
-    int min_val;
-    for (int i = 0; i < n; i++) {
-        int curr = q.front();
-        q.pop();
-        if (i != min_index) q.push(curr);
-        else min_val = curr;
+
+    int dequeue() {
+        if (isEmpty()) return -1;
+        int val = front->data;
+        Node* temp = front;
+        front = front->next;
+        if (front == NULL) rear = NULL;
+        delete temp;
+        count--;
+        return val;
     }
-    q.push(min_val);
-}
 
-void sortQueue(queue<int> &q) {
-    for (int i = 1; i <= q.size(); i++) {
-        int min_index = minIndex(q, q.size() - i);
-        insertMinToRear(q, min_index);
+    int size() {
+        return count;
     }
-}
 
-int main() {
-    queue<int> q;
-    q.push(11); q.push(5); q.push(4); q.push(21);
-
-    sortQueue(q);
-
-    while (!q.empty()) {
-        cout << q.front() << " ";
-        q.pop();
+    void display() {
+        Node* temp = front;
+        while (temp != NULL) {
+            cout << temp->data << " ";
+            temp = temp->next;
+        }
+        cout << endl;
     }
+};
+
+
+
+int main(){
     return 0;
 }
-

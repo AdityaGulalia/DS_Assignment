@@ -1,32 +1,41 @@
 #include <iostream>
 #include <queue>
-#include <vector>
+#include <stack>
 using namespace std;
 
-int countStudents(vector<int> &students, vector<int> &sandwiches) {
-    queue<int> q;
-    for (int s : students) q.push(s);
+int countStudents(queue<int> students, stack<int> sandwiches) {
+    int rotations = 0;  
 
-    int i = 0, count = 0;
-    while (!q.empty() && count < q.size()) {
-        if (q.front() == sandwiches[i]) {
-            q.pop();
-            i++;
-            count = 0; 
+    while (!students.empty()) {
+        if (students.front() == sandwiches.top()) {
+            students.pop();        
+            sandwiches.pop();      
+            rotations = 0;        
         } else {
-            q.push(q.front());
-            q.pop();
-            count++; 
+            int stu = students.front();
+            students.pop();
+            students.push(stu);    
+            rotations++;          
         }
+
+        if (rotations == students.size()) break;
     }
-    return q.size();
+
+    return students.size(); 
 }
 
 int main() {
-    vector<int> students = {1,1,0,0};
-    vector<int> sandwiches = {0,1,0,1};
+    queue<int> students;
+    stack<int> sandwiches;
+    int stuArr[] = {1, 1, 0, 0};
+    int sandArr[] = {0, 1, 0, 1};
+    int n = 4;
 
-    cout << countStudents(students, sandwiches);
+    for (int i = 0; i < n; i++) students.push(stuArr[i]);
+
+    for (int i = n - 1; i >= 0; i--) sandwiches.push(sandArr[i]);
+
+    cout << "Number of students unable to eat: " 
+        << countStudents(students, sandwiches);
     return 0;
 }
-

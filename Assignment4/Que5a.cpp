@@ -1,26 +1,112 @@
 #include <iostream>
 using namespace std;
 
-#define MAX 100
-int q1[MAX], q2[MAX];
-int f1=0,r1=-1,f2=0,r2=-1;
+class Queue {
+    int arr[100];
+    int front, rear, capacity;
 
-void push(int x) {
-    q2[++r2] = x;
-    while (f1 <= r1) q2[++r2] = q1[f1++];
-    for (int i=0;i<=r2;i++) q1[i]=q2[i];
-    r1=r2; f1=0; f2=0; r2=-1;
-}
+public:
+    Queue(int cap = 100) {
+        capacity = cap;
+        front = 0;
+        rear = -1;
+    }
 
-int pop() {
-    if (f1 > r1) return -1;
-    return q1[f1++];
-}
+    bool isEmpty() {
+        return front > rear;
+    }
 
+    bool isFull() {
+        return rear == capacity - 1;
+    }
+
+    void enqueue(int val) {
+        if (isFull()) {
+            return;
+        }
+        arr[++rear] = val;
+    }
+
+    int dequeue() {
+        if (isEmpty()) {
+            return -1;
+        }
+        return arr[front++];
+    }
+
+    int frontElement() {
+        if (isEmpty()) return -1;
+        return arr[front];
+    }
+
+    int size() {
+        return rear - front + 1;
+    }
+
+    void reset() {  
+        if (isEmpty()) {
+            front = 0;
+            rear = -1;
+        }
+    }
+};
+
+class Stack {
+    Queue q1, q2;
+
+public:
+    void push(int x) {
+        while (!q1.isEmpty()) {
+            q2.enqueue(q1.dequeue());
+        }
+
+        q1.enqueue(x);
+
+        while (!q2.isEmpty()) {
+            q1.enqueue(q2.dequeue());
+        }
+    }
+
+    void pop() {
+        if (q1.isEmpty()) {
+            return;
+        }
+        q1.dequeue();
+    }
+
+    int top() {
+        if (q1.isEmpty()) {
+            return -1;
+        }
+        return q1.frontElement();
+    }
+
+    bool isEmpty() {
+        return q1.isEmpty();
+    }
+
+    void display() {
+        if (q1.isEmpty()) {
+            return;
+        }
+
+        cout << "Stack elements: ";
+        for (int i = q1.frontElement(); i <= q1.size(); i++) {
+            cout << q1.frontElement() << " ";
+            q1.dequeue();
+        }
+        cout << endl;
+    }
+};
 int main() {
-    push(10); push(20); push(30);
-    cout << pop() << endl; 
-    cout << pop() << endl; 
+    Stack s;
+    s.push(10);
+    s.push(20);
+    s.push(30);
+    cout << "Top: " << s.top() << endl;
+    s.pop();
+    cout << "Top after pop: " << s.top() << endl; 
+    s.push(40);
+    cout << "Top after push 40: " << s.top() << endl; 
     return 0;
 }
-
