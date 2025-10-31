@@ -1,25 +1,93 @@
 #include <iostream>
 using namespace std;
 
-struct Node { int data; Node* next; };
-Node* head=NULL;
+class Node {
+public:
+    int data;
+    Node* next;
+    Node(int val) {
+        data = val;
+        next = NULL;
+    }
+};
 
-void insertAtEnd(int val) {
-    Node* newNode=new Node(); newNode->data=val; newNode->next=NULL;
-    if(head==NULL) head=newNode;
-    else { Node* temp=head; while(temp->next!=NULL) temp=temp->next; temp->next=newNode; }
-}
+class LinkedList {
+private:
+    Node* head;
 
-int findMiddle() {
-    Node* slow=head; Node* fast=head;
-    while(fast!=NULL && fast->next!=NULL) { slow=slow->next; fast=fast->next->next; }
-    return slow->data;
-}
+public:
+    LinkedList() {
+        head = NULL;
+    }
+
+    void insertAtEnd(int val) {
+        Node* newNode = new Node(val);
+        if (head == NULL) {
+            head = newNode;
+            return;
+        }
+        Node* temp = head;
+        while (temp->next != NULL)
+            temp = temp->next;
+        temp->next = newNode;
+    }
+
+    Node* findMiddle() {
+        int count = 0;
+        int pos_even = 0, pos_odd = 0;
+        Node* temp = head;
+        Node* temp_new = head;
+
+        while (temp != NULL) {
+            temp = temp->next;
+            count++;
+        }
+
+        if (count % 2 == 0) {
+            pos_even = count / 2;
+            for (int i = 1; i <= pos_even; i++) {
+                temp_new = temp_new->next;
+            }
+        } 
+        else {
+            pos_odd = count / 2;
+            for (int i = 1; i <= pos_odd; i++) {
+                temp_new = temp_new->next;
+            }
+        }
+
+        return temp_new;
+    }
+
+    void display() {
+        Node* temp = head;
+        while (temp != NULL) {
+            cout << temp->data;
+            temp = temp->next;
+        }
+    }
+
+    void printMiddle() {
+        Node* mid = findMiddle();
+        if (mid)
+            cout << "Middle element: " << mid->data << endl;
+        else
+            cout << "List is empty." << endl;
+    }
+};
 
 int main() {
-    int arr[]={1,2,3,4,5};
-    for(int i=0;i<5;i++) insertAtEnd(arr[i]);
-    cout<<"Middle: "<<findMiddle()<<endl;
+    LinkedList list;
+    list.insertAtEnd(1);
+    list.insertAtEnd(2);
+    list.insertAtEnd(3);
+    list.insertAtEnd(4);
+    list.insertAtEnd(5);
+
+    cout << "Linked List: ";
+    list.display();
+
+    list.printMiddle();
+
     return 0;
 }
-
